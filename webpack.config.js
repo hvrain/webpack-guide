@@ -1,29 +1,34 @@
 const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
 module.exports = {
-  //root directory
-  // context: path.resolve(__dirname, "./"),
-  mode: "development",
-  entry: {
-    index: "./src/index.js",
-    print: "./src/print.js",
-    // about: './about.js',
-    // contact: './contact.js',
+  entry: "./src/js/main.js",
+  output: {
+    filename: "main.js",
+    path: path.resolve(__dirname, "dist"),
+    clean: true,
   },
   devtool: "inline-source-map",
-  devServer: {
-    static: "./dist",
+  module: {
+    rules: [
+      {
+        test: /\.s?css$/i,
+        use: ["style-loader", "css-loader", "sass-loader", "postcss-loader"],
+      },
+      {
+        test: /\.m?js$/,
+        exclude: ["/node_modules"],
+        use: ["babel-loader"],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Development",
+      title: "Output Management",
+      template: "src/index.html",
+    }),
+    new CopyPlugin({
+      patterns: [{ from: "src/static", to: "static" }],
     }),
   ],
-  output: {
-    filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist"),
-    clean: true,
-    publicPath: "/",
-  },
 };
